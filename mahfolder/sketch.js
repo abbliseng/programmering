@@ -1,24 +1,50 @@
 var w = 900
 var h = 900
+var sideLength = 10
+var mice = []
+var t1 = 0;
+var t2 = 0;
+
+class Mouse {
+    constructor(position, speed) {
+        this.position = position;
+        this.food = 50;
+        this.lastMoved = 0;
+        this.speed = speed;
+        this.generateMouse(this.position[0],this.position[1]); // Generates the image
+    }
+    generateMouse(a,b) {
+        var x = w*a/sideLength
+        var y = h*b/sideLength
+        fill(180,180,180);
+        stroke(190,190,190);
+        ellipse(x+tileSize/2,y+tileSize/2,tileSize*0.8,tileSize*0.8);
+    }
+    move(dir) {
+        // 0 => up, 1 => ner, 2 => höger, 3 => vänster
+        if (dir == 0){
+            this.position[1] -= 1;
+        }else if (dir == 1){
+            this.position[1] += 1;
+        }else if (dir == 2){
+            this.position[0] += 1;
+        }else if (dir == 3){
+            this.position[0] -= 1;
+        }
+    }
+}
 
 function setup() {
     createCanvas(w, h);
-    background(51);
-    // line(0, 0, width, height);
+    mice.push(new Mouse([1,1],1000))
+    // mouse1.generateMouse();
 }
 
 function mousePressed() {
-    // var x = map(mouseX, 0, width, 0, 1);
-    // var y = map(mouseY, 0, height, 1, 0);
-    // var point = createVector(x, y);
-    // data.push(point);
-    // // console.clear();
-    // console.log("X:"+x+" Y:"+y);
-    // console.log(ymean);
-    // console.log(data);
 }
 
 var tileSize = 0;
+var currentGameScene = [];
 
 function generateGrid(gridSize) {
     for (let i = 1; i < gridSize; i++) {
@@ -27,28 +53,22 @@ function generateGrid(gridSize) {
         line(0, h*i/gridSize, w, h*i/gridSize);
     }
     tileSize = w/gridSize;
-    // fill(245,118,26);
-    // stroke(245,118,26);
-    // ellipse(tileSize/2,tileSize/2,tileSize-tileSize*0.2,tileSize-tileSize*0.2);
+    currentGameScene = new Array(gridSize**2).fill(0.0);
 }
 
+function generateMouse() {
+    // facing, energy, smell
+}
 
 function draw() {
-    generateGrid(10);
-
-    //Rita ut varje datapunkt
-    // for (let i = 0; i < data.length; i++) {
-    //   var x = map(data[i].x, 0, 1, 0, width);
-    //   var y = map(data[i].y, 0, 1, height, 0);
-    //   fill(255);
-    //   stroke(255);
-    //   ellipse(x, y, 8, 8)
-
-    // }
-    //Om vi har mer än 1 punkt räkna ut och rita ut sträcket.
-    // if (data.length > 1) {
-    //   linearRegression();
-    //   drawLine();
-    // }
-
+    background(51);
+    generateGrid(sideLength);
+    t1 = millis();
+    mice.forEach( (mouse, index) => {
+        if ((t1-mouse.lastMoved)>=mouse.speed){
+            mouse.move(2);
+            mouse.lastMoved = t1;
+        }
+        mouse.generateMouse(mouse.position[0],mouse.position[1]);
+    })
 }
