@@ -2,6 +2,7 @@ var w = 900
 var h = 900
 var sideLength = 10
 var mice = []
+var cheeses = []
 var t1 = 0;
 var t2 = 0;
 
@@ -34,6 +35,19 @@ class Mouse {
     }
 }
 
+class Cheese {
+    constructor(position){
+        this.position = position;
+    }
+    generate(a,b) {
+        var x = w*a/sideLength
+        var y = h*b/sideLength
+        fill(255,166,0);
+        stroke(255,166,0);
+        ellipse(x+tileSize/2,y+tileSize/2,tileSize*0.8,tileSize*0.8);
+    }
+}
+
 function setup() {
     createCanvas(w, h);
     mice.push(new Mouse([1,1],1000))
@@ -41,6 +55,15 @@ function setup() {
 }
 
 function mousePressed() {
+    // (w/sideLength) // ex. 90 pixels per tile
+    var xTile = Math.floor(mouseX/(w/sideLength));
+    var yTile = Math.floor(mouseY/(w/sideLength));
+    if (cheeses.length > 0) {
+        cheeses[0].position = [xTile,yTile];
+    }else{
+        cheeses.push(new Cheese([xTile,yTile]));
+    }
+
 }
 
 var tileSize = 0;
@@ -66,9 +89,12 @@ function draw() {
     t1 = millis();
     mice.forEach( (mouse, index) => {
         if ((t1-mouse.lastMoved)>=mouse.speed){
-            mouse.move(2);
+            // mouse.move(2);
             mouse.lastMoved = t1;
         }
         mouse.generateMouse(mouse.position[0],mouse.position[1]);
+    })
+    cheeses.forEach( (cheese)=> {
+        cheese.generate(cheese.position[0],cheese.position[1])
     })
 }
